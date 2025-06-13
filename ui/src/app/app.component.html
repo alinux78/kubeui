@@ -1,0 +1,30 @@
+<!-- <mat-toolbar>
+  <button matIconButton class="example-icon" aria-label="Example icon-button with menu icon">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>KVO Debug</span>
+  <span class="example-spacer"></span>
+  <button matIconButton class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+    <mat-icon>favorite</mat-icon>
+  </button>
+  <button matIconButton class="example-icon" aria-label="Example icon-button with share icon">
+    <mat-icon>share</mat-icon>
+  </button>
+</mat-toolbar> -->
+
+<div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+  <button matButton [matMenuTriggerFor]="menu">Switch view</button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="changeView('pods')">Pods</button>
+    <button mat-menu-item (click)="changeView('deployments')">Deployments</button>
+  </mat-menu>
+</div>
+
+
+<ng-container *ngIf="currentView === 'pods'">
+  <pods-list></pods-list>
+</ng-container>
+<ng-container *ngIf="currentView === 'deployments'">
+  <deployments-list></deployments-list>
+</ng-container>
+

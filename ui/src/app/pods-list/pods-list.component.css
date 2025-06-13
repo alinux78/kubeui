@@ -1,0 +1,41 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f4f4f4;
+}
+
+/* Odd rows (1st, 3rd, etc.) */
+tr:nth-child(odd) {
+  background-color: #e6f7ff; /* light blue */
+}
+
+/* Even rows (2nd, 4th, etc.) - optional */
+tr:nth-child(even) {
+  background-color: #fff; /* white or any other color */
+}
+
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-controls input[type="text"] {
+  padding: 0.5rem;
+  width: 200px;
+}
+
+/* Class for running status */
+.running {
+  color: green;
+  font-weight: bold;
+}

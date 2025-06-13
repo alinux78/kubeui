@@ -1,0 +1,28 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+button {
+  background-color: #d50a5f;
+  color: white;
+  border: none;
+  padding: 5px;;
+}
+
+button:disabled {
+  background-color: #a4064569;
+  color: rgb(230, 232, 232);
+  border: none;
+  padding: 5px;;
+}
+
+
+.page_title {
+  font-size: 32px;
+  color: #0683ea;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
