@@ -3,12 +3,15 @@ import { interval, Subscription } from 'rxjs';
 import { Pod, PodService } from '../pod.service';
 import { FormsModule } from '@angular/forms';
 import { NgClass, NgFor, NgIf } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { DescribePodModalComponent } from '../describe-pod-modal/describe-pod-modal.component';
 
 @Component({
   selector: 'pods-list',
   templateUrl: './pods-list.component.html',
   styleUrls: ['./pods-list.component.css'],
-  imports: [FormsModule, NgFor, NgClass, NgIf]
+  imports: [FormsModule, NgFor, NgClass, NgIf, MatTableModule]
 
 })
 export class PodsListComponent implements OnInit, OnDestroy {
@@ -21,7 +24,7 @@ export class PodsListComponent implements OnInit, OnDestroy {
 
   private refreshSubscription: Subscription | undefined;
 
-  constructor(private podService: PodService) {}
+  constructor(private podService: PodService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loadPods();
@@ -48,6 +51,23 @@ export class PodsListComponent implements OnInit, OnDestroy {
     } else {
       this.selectedPods.set(pod.name, pod);
     }
+  }
+
+  describePod(pod: Pod): void {
+    this.podService.desscribePod(pod).subscribe({
+      next: (data) => {
+        const json = JSON.stringify(data, null, 2);
+        this.dialog.open(DescribePodModalComponent, {
+          data: { podName: pod.name, json },
+          width: '95%',
+          height: '80%'
+        });
+      },
+      error: (err) => {
+        console.error('Error describing pod:', err);
+        this.error = 'Failed to describe pod.';
+      }
+    });
   }
 
   loadPods(): void {
@@ -77,9 +97,13 @@ export class PodsListComponent implements OnInit, OnDestroy {
       this.selectedPods.clear();
     }
   }
+  restartPod(pod: Pod): void {
+    this.podService.restartPod(pod, () => this.loadPods());
+    this.selectedPods.clear();
+  }
 
   showSuccessToast(message: string): void {
-  // e.g., use MatSnackBar from Angular Material
-  //this.snackBar.open(message, 'Dismiss', { duration: 3000 });
-}
+    // e.g., use MatSnackBar from Angular Material
+    //this.snackBar.open(message, 'Dismiss', { duration: 3000 });
+  }
 }

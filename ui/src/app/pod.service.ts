@@ -30,4 +30,9 @@ export class PodService {
       error: (err) => console.error('Failed to restart pod', err)
     });
   }
+
+    desscribePod(pod: Pod): Observable<object> {
+      const restartUrl = `${this.apiUrl}/${pod.namespace}/${pod.name}/describe`;
+      return this.http.get(restartUrl, {});
+  }
 }

@@ -1,25 +1,26 @@
 package com.mc.study.debug.k8s.service;
 
 import com.mc.study.debug.k8s.utils.PodUtils;
-import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1DeleteOptions;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodList;
-import io.kubernetes.client.util.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.mc.study.debug.k8s.model.Pod;
 
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PodService {
+    private static final Logger logger = LoggerFactory.getLogger(PodService.class);
+
+
 
     public List<Pod> listPods() {
         CoreV1Api api = new CoreV1Api();
@@ -48,6 +49,7 @@ public class PodService {
             }
             return pods;
         } catch (ApiException e) {
+            logger.error("Error when listing pods: ", e);
             throw new RuntimeException("Failed to list pods: " + e.getMessage(), e);
         }
         
@@ -58,17 +60,29 @@ public class PodService {
         deleteOptions.setGracePeriodSeconds(5L); // Wait up to 5 seconds before force delete
         CoreV1Api api = new CoreV1Api();
 
+        var podFQN = namespace+"/"+podName;
+        logger.info("Deleting pod: " + podFQN);
         try {
-            var list = api.listPodForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
-            // Delete the pod
             api.deleteNamespacedPod(podName, namespace, null, null, null, null, "Foreground", deleteOptions);
-            System.out.println("Pod deletion triggered: " + namespace+ "/" + podName);
+            logger.info("Pod deletion triggered: " + podFQN);
 
         } catch (ApiException e) {
-            System.out.println(e);
-            throw new RuntimeException("Failed to list pods: " + e.getMessage(), e);
+            logger.error("Error deleting pod:" + podFQN, e);
+            throw new RuntimeException("Failed to delete pod: " + e.getMessage(), e);
         }
 
+    }
+
+    public V1Pod fetchPod(String namespace, String podName) {
+        var podFQN = namespace+"/"+podName;
+        try {
+            CoreV1Api api = new CoreV1Api();
+            V1Pod pod = api.readNamespacedPod(podName, namespace, null);
+            return pod;
+        } catch (ApiException e) {
+            logger.error("Error when fetching pod:" + podFQN, e);
+            throw new RuntimeException("Failed to fetch pod: " + e.getMessage(), e);
+        }
     }
 
 }

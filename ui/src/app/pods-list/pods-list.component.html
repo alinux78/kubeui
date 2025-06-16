@@ -1,14 +1,9 @@
 <h2 class="page_title">Pods</h2>
 
 <div class="table-controls">
-    <div>
-    <button (click)="restartSelectedPods()" [disabled]="selectedPods.size == 0">Restart</button>
-  </div>
-
   <input type="text" [(ngModel)]="filterText" placeholder="Filter..." />
 </div>
 
-<div *ngIf="loading">Loading...</div>
 <div *ngIf="error">{{ error }}</div>
 
 <table>
@@ -23,7 +18,10 @@
   </thead>
   <tbody>
     <tr *ngFor="let pod of filteredPods">
-      <td><input type="checkbox" [checked]="isPodSelected(pod)" (change) = "togglePodSelection(pod)" /></td>
+      <td>
+        <button mat-button (click)="describePod(pod)">Describe</button>
+        <button style="margin-left: 5px;" (click)="restartPod(pod)">Restart</button>
+      </td>
       <td>{{ pod.name }}</td>
       <td [ngClass]="{'running': pod.status === 'Running'}">{{ pod.status }}</td>
       <td>{{ pod.namespace }}</td>
